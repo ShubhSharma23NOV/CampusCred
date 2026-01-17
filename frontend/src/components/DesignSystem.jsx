@@ -121,3 +121,59 @@ export const Progress = ({ value, className, ...props }) => (
     />
   </div>
 );
+
+// Simple Dialog Implementation
+export const Dialog = ({ open, onOpenChange, children }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+        onClick={() => onOpenChange(false)}
+      />
+      <div className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-white/40 overflow-hidden animate-in zoom-in-95 duration-200">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+export const DialogContent = ({ className, children }) => (
+  <div className={cn("p-8 sm:p-10 max-h-[90vh] overflow-y-auto no-scrollbar", className)}>
+    {children}
+  </div>
+);
+
+export const DialogHeader = ({ className, children }) => (
+  <div className={cn("flex flex-col space-y-2 text-center sm:text-left mb-8", className)}>
+    {children}
+  </div>
+);
+
+export const DialogTitle = ({ className, children }) => (
+  <h2 className={cn("text-2xl font-black tracking-tight", className)}>
+    {children}
+  </h2>
+);
+
+// Simple Sheet (Drawer) Implementation
+export const Sheet = ({ open, onOpenChange, children }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[100] flex justify-end">
+      <div
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm animate-in fade-in duration-200"
+        onClick={() => onOpenChange(false)}
+      />
+      <div className="relative w-full max-w-xl bg-white h-full shadow-2xl border-l border-white/40 animate-in slide-in-from-right duration-300">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+export const SheetContent = ({ className, children }) => (
+  <div className={cn("h-full flex flex-col p-8 overflow-y-auto no-scrollbar", className)}>
+    {children}
+  </div>
+);

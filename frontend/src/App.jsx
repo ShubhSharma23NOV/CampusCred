@@ -14,10 +14,11 @@ import ProfileProofs from './pages/ProfileProofs'
 import RecruiterDashboard from './pages/RecruiterDashboard'
 import CandidateEvidenceView from './pages/CandidateEvidenceView'
 import DecisionPanel from './pages/DecisionPanel'
+import RecruiterPosts from './pages/RecruiterPosts'
 import GoogleIntegration from './pages/GoogleIntegration'
 import InternshipPlacementAnalytics from './pages/InternshipPlacementAnalytics'
 import TestAI from './pages/TestAI'
-import { ShieldCheck, Command, Search, Bell, Sparkles, LogOut, LayoutDashboard, History, Briefcase, BarChart3, UserCircle, Users, FileCheck, CheckSquare, FileSpreadsheet, Link2, Bot } from "lucide-react"
+import { ShieldCheck, Command, Search, Bell, Sparkles, LogOut, LayoutDashboard, History, Briefcase, BarChart3, UserCircle, Users, FileCheck, CheckSquare, FileSpreadsheet, Link2, Bot, Megaphone } from "lucide-react"
 import logo from './assets/logo.png'
 
 function App() {
@@ -219,6 +220,15 @@ function App() {
             >
               <CheckSquare className="w-3.5 h-3.5" /> Shortlist
             </button>
+            <button
+              onClick={() => setRecruiterTab('posts')}
+              className={cn(
+                "flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all",
+                recruiterTab === 'posts' ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:bg-white/50 hover:text-foreground"
+              )}
+            >
+              <Megaphone className="w-3.5 h-3.5" /> Posts
+            </button>
           </nav>
         </div>
       )}
@@ -302,6 +312,7 @@ function App() {
               {recruiterTab === 'dashboard' && <RecruiterDashboard onSelectCandidate={(c) => { setSelectedCandidate(c); setRecruiterTab('evidence'); }} />}
               {recruiterTab === 'evidence' && <CandidateEvidenceView candidate={selectedCandidate} />}
               {recruiterTab === 'shortlist' && <DecisionPanel />}
+              {recruiterTab === 'posts' && <RecruiterPosts />}
             </div>
           )}
           {view === 'admin' && (
