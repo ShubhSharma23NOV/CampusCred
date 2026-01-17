@@ -35,28 +35,7 @@ export default function StudentDashboard() {
                 </button>
             </header>
 
-            {/* Quick Action Card */}
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 shadow-lg">
-                <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                                <FileText className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold text-blue-900">Ready to Log Your Latest Experience?</h3>
-                                <p className="text-sm text-blue-700 font-medium">Add internships, projects, certifications, or community work to your verified record.</p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() => setShowForm(true)}
-                            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 text-sm"
-                        >
-                            <Plus className="w-4 h-4" /> Start Form
-                        </button>
-                    </div>
-                </CardContent>
-            </Card>
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
@@ -152,8 +131,8 @@ export default function StudentDashboard() {
                 </Card>
             </div>
 
-            <MockGoogleForm 
-                isOpen={showForm} 
+            <MockGoogleForm
+                isOpen={showForm}
                 onClose={() => setShowForm(false)}
                 onSubmit={handleFormSubmit}
             />

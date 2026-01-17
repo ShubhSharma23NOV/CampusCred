@@ -16,7 +16,9 @@ import CandidateEvidenceView from './pages/CandidateEvidenceView'
 import DecisionPanel from './pages/DecisionPanel'
 import GoogleIntegration from './pages/GoogleIntegration'
 import InternshipPlacementAnalytics from './pages/InternshipPlacementAnalytics'
-import { ShieldCheck, Command, Search, Bell, Sparkles, LogOut, LayoutDashboard, History, Briefcase, BarChart3, UserCircle, Users, FileCheck, CheckSquare, FileSpreadsheet, Link2 } from "lucide-react"
+import TestAI from './pages/TestAI'
+import { ShieldCheck, Command, Search, Bell, Sparkles, LogOut, LayoutDashboard, History, Briefcase, BarChart3, UserCircle, Users, FileCheck, CheckSquare, FileSpreadsheet, Link2, Bot } from "lucide-react"
+import logo from './assets/logo.png'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login')
@@ -43,15 +45,27 @@ function App() {
     return <RegisterPage onRegister={handleLogin} onSwitchToLogin={() => setCurrentPage('login')} />
   }
 
+  if (currentPage === 'test-ai') {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="p-4 border-b flex justify-between items-center bg-white">
+          <h1 className="font-bold">AI Test Mode</h1>
+          <button onClick={() => setCurrentPage('dashboard')} className="text-sm text-primary hover:underline">Back to Dashboard</button>
+        </header>
+        <TestAI />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans selection:bg-primary/20 overflow-x-hidden">
       {/* Top Floating Header */}
       <div className="px-4 md:px-6 py-4 sticky top-0 z-50">
         <header className="max-w-7xl mx-auto min-h-20 bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl shadow-primary/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-wrap items-center justify-between p-4 px-6 md:px-8 transition-all gap-4">
           <div className="flex items-center gap-4 md:gap-10 shrink-0">
-            <div className="flex items-center gap-2 md:gap-3 group cursor-pointer">
-              <div className="p-2 bg-gradient-to-tr from-primary to-indigo-400 rounded-xl md:rounded-2xl shadow-lg shadow-primary/30 group-hover:rotate-12 transition-transform">
-                <ShieldCheck className="w-4 h-4 md:w-5 md:h-5 text-white" />
+            <div className="flex items-center gap-2 md:gap-3 group cursor-pointer" onClick={() => setCurrentPage('dashboard')}>
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden shadow-lg shadow-primary/30 group-hover:rotate-12 transition-transform bg-white p-0.5">
+                <img src={logo} alt="CampusCred Logo" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col">
                 <span className="font-extrabold text-base md:text-lg tracking-tight bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent">CampusCred</span>
@@ -77,6 +91,16 @@ function App() {
                 <Bell className="w-4 h-4 md:w-5 md:h-5 group-hover:shake" />
                 <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-destructive rounded-full border-2 border-white" />
               </button>
+
+              {view === 'student' && (
+                <button
+                  onClick={() => setCurrentPage('test-ai')}
+                  className="p-2 md:p-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl md:rounded-2xl transition-all relative group"
+                  title="AI Test Mode"
+                >
+                  <Bot className="w-4 h-4 md:w-5 md:h-5" />
+                </button>
+              )}
 
               <div className="h-6 md:h-8 w-[1px] bg-border/50" />
 

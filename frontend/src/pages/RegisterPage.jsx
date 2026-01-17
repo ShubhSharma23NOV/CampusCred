@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge } from "@/components/DesignSystem";
 import { ShieldCheck, Mail, Lock, User, ArrowRight, Briefcase, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import logo from '../assets/logo.png'
 
 export default function RegisterPage({ onRegister, onSwitchToLogin }) {
     const [role, setRole] = useState('student');
@@ -14,8 +15,8 @@ export default function RegisterPage({ onRegister, onSwitchToLogin }) {
             <div className="w-full max-w-[480px] relative">
                 <div className="text-center mb-8 space-y-4">
                     <div className="inline-flex items-center gap-3 group px-4 py-2 bg-white rounded-2xl shadow-sm border border-border/50">
-                        <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center text-white">
-                            <ShieldCheck className="w-5 h-5" />
+                        <div className="w-10 h-10 rounded-full overflow-hidden shadow-lg shadow-primary/20 bg-white p-0.5">
+                            <img src={logo} alt="CampusCred Logo" className="w-full h-full object-cover" />
                         </div>
                         <span className="font-black text-xl tracking-tight text-foreground">CampusCred</span>
                     </div>

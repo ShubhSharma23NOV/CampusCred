@@ -65,25 +65,25 @@ Focus on their strengths, experience quality, and placement readiness.
  */
 const generateMockInsights = (candidate) => {
     const insights = [];
-    
+
     if (candidate.cgpa >= 8.5) {
         insights.push("Strong academic performance demonstrates consistent excellence");
     } else if (candidate.cgpa >= 7.5) {
         insights.push("Solid academic foundation with good technical understanding");
     }
-    
+
     if (candidate.internships?.length > 1) {
         insights.push("multiple verified internships show practical industry exposure");
     } else if (candidate.internships?.length === 1) {
         insights.push("relevant internship experience adds practical value");
     }
-    
+
     if (candidate.credibilityScore >= 95) {
         insights.push("and exceptional verification history builds strong trust");
     } else if (candidate.credibilityScore >= 85) {
         insights.push("with reliable verification record");
     }
-    
+
     return `Candidate demonstrates ${insights.join(', ')}.`;
 };
 
@@ -101,7 +101,7 @@ export const analyzeSkillGaps = async (students, marketDemands) => {
     try {
         const studentSkills = students.flatMap(s => s.skills || []);
         const uniqueSkills = [...new Set(studentSkills)];
-        
+
         const prompt = `
 Analyze the skill gap between student cohort and market demands:
 
@@ -176,30 +176,30 @@ const generateMockSkillGapAnalysis = (students, marketDemands) => {
 export const predictPlacementProbability = async (student, historicalData) => {
     // Simplified prediction algorithm
     // In production, this would use Gemini AI with historical data
-    
+
     let probability = 50; // Base probability
-    
+
     // CGPA factor
     if (student.cgpa >= 8.5) probability += 20;
     else if (student.cgpa >= 7.5) probability += 10;
     else if (student.cgpa < 6.5) probability -= 10;
-    
+
     // Internship factor
     if (student.internships?.length >= 2) probability += 15;
     else if (student.internships?.length === 1) probability += 10;
     else probability -= 5;
-    
+
     // Credibility factor
     if (student.credibilityScore >= 95) probability += 10;
     else if (student.credibilityScore >= 85) probability += 5;
-    
+
     // Skills factor
     if (student.skills?.length >= 5) probability += 5;
-    
+
     // Cap at 95% (never 100% certain)
     probability = Math.min(probability, 95);
     probability = Math.max(probability, 10); // Minimum 10%
-    
+
     return {
         probability: Math.round(probability),
         confidence: probability >= 70 ? 'high' : probability >= 50 ? 'medium' : 'low',
@@ -219,7 +219,7 @@ export const predictPlacementProbability = async (student, historicalData) => {
  */
 export const generateInstitutionalRecommendations = async (analyticsData) => {
     const recommendations = [];
-    
+
     // Placement rate analysis
     if (analyticsData.placementRate < 70) {
         recommendations.push({
@@ -229,7 +229,7 @@ export const generateInstitutionalRecommendations = async (analyticsData) => {
             impact: 'Could improve placement rate by 15-20%'
         });
     }
-    
+
     // Internship conversion analysis
     if (analyticsData.internshipConversionRate < 60) {
         recommendations.push({
@@ -239,7 +239,7 @@ export const generateInstitutionalRecommendations = async (analyticsData) => {
             impact: 'Increase conversion rate significantly'
         });
     }
-    
+
     // Skill gap analysis
     if (analyticsData.skillGaps?.length > 5) {
         recommendations.push({
@@ -249,7 +249,7 @@ export const generateInstitutionalRecommendations = async (analyticsData) => {
             impact: 'Bridge critical skill gaps in 6-8 months'
         });
     }
-    
+
     // Credibility score analysis
     if (analyticsData.averageCredibility < 80) {
         recommendations.push({
@@ -259,8 +259,238 @@ export const generateInstitutionalRecommendations = async (analyticsData) => {
             impact: 'Improve recruiter trust and engagement'
         });
     }
-    
+
     return recommendations;
+};
+
+/**
+ * Evaluate placement readiness score using Gemini AI
+ * @param {Object} candidate - Student profile
+ * @param {Object} jobRole - Job requirements
+ * @returns {Promise<Object>} Detailed evaluation
+ */
+export const evaluatePlacementReadiness = async (candidate, jobRole) => {
+    if (!isGeminiConfigured()) {
+        console.warn("Gemini API key not found. Returning mock evaluation.");
+        return generateMockEvaluation(candidate, jobRole);
+    }
+
+    try {
+        const prompt = `
+You are an AI placement readiness engine for a campus recruitment platform.
+
+Your task:
+1. Evaluate a student profile against a job role.
+2. Generate a Placement Readiness Score (0–100).
+3. Assign a readiness label for dashboard display.
+4. Provide structured, explainable insights suitable for a UI widget.
+
+Scoring Weights:
+- Skills Match: 40%
+- Internship Relevance: 25%
+- Verification & Credibility: 20%
+- Academic Performance (CGPA): 15%
+
+Evaluation Rules:
+- Match student skills with job-required skills.
+- Prioritize domain-relevant internships.
+- Fully verified profiles should score highest in credibility.
+- CGPA should support skills, not dominate the outcome.
+
+Input:
+Student Profile:
+- Skills: ${candidate.skills?.join(', ') || 'None'}
+- Internships: ${candidate.internships?.map(i => i.role + ' at ' + i.company).join(', ') || 'None'}
+- Verification Status: ${candidate.isVerified ? 'Verified' : 'Not Verified'}
+- Credibility Score (0–100): ${candidate.credibilityScore}
+- CGPA: ${candidate.cgpa}
+
+Job Role:
+- Required Skills: ${jobRole.requiredSkills?.join(', ') || 'General'}
+- Job Domain: ${jobRole.domain || 'General'}
+
+Output Format (STRICT JSON, no extra text):
+
+{
+  "readinessScore": number,
+  "readinessLabel": "Ready | Moderate | Needs Improvement",
+  "summary": "One-line human-readable insight",
+  "breakdown": {
+    "skills": number,
+    "internship": number,
+    "verification": number,
+    "academic": number
+  },
+  "keyReasons": [
+    "Reason 1",
+    "Reason 2",
+    "Reason 3"
+  ],
+  "improvementTips": [
+    "Tip 1",
+    "Tip 2"
+  ]
+}
+
+Label Rules:
+- Score ≥ 75 → Ready
+- Score 50–74 → Moderate
+- Score < 50 → Needs Improvement
+        `;
+
+        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        const text = data.candidates[0]?.content?.parts[0]?.text;
+
+        if (!text) throw new Error("No response from Gemini");
+
+        return parseEvaluationResponse(text);
+
+    } catch (error) {
+        console.error('Gemini AI error:', error);
+        return generateMockEvaluation(candidate, jobRole);
+    }
+};
+
+/**
+ * Parse the raw text response from Gemini into a structured object
+ */
+const parseEvaluationResponse = (text) => {
+    try {
+        // Clean up markdown code blocks if present
+        const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        return JSON.parse(cleanedText);
+    } catch (e) {
+        console.error("Error parsing AI response", e);
+        // Fallback to mock if parsing fails
+        return {
+            readinessScore: 0,
+            readinessLabel: "Error",
+            summary: "Failed to parse AI response",
+            breakdown: { skills: 0, internship: 0, verification: 0, academic: 0 },
+            keyReasons: ["Error parsing response"],
+            improvementTips: []
+        };
+    }
+};
+
+/**
+ * Generate mock evaluation for fallback
+ */
+/**
+ * Run placement evaluation using Antigravity API
+ * @param {Object} params - { student, job }
+ * @returns {Promise<Object>} Evaluation result
+ */
+export async function runPlacementEvaluation({
+    student,
+    job
+}) {
+    const prompt = `
+You are an AI placement readiness engine for a campus recruitment platform.
+
+Your task:
+1. Evaluate a student profile against a job role.
+2. Generate a Placement Readiness Score (0–100).
+3. Assign a readiness label for dashboard display.
+4. Provide structured, explainable insights suitable for a UI widget.
+
+Scoring Weights:
+- Skills Match: 40%
+- Internship Relevance: 25%
+- Verification & Credibility: 20%
+- Academic Performance (CGPA): 15%
+
+Student Profile:
+- Skills: ${student.skills.join(", ")}
+- Internships: ${student.internships.map(i => i.role).join(", ")}
+- Verification Status: ${student.isVerified ? "Verified" : "Not Verified"}
+- Credibility Score: ${student.credibilityScore}
+- CGPA: ${student.cgpa}
+
+Job Role:
+- Required Skills: ${job.requiredSkills.join(", ")}
+- Job Domain: ${job.domain}
+
+Output Format (STRICT JSON only):
+
+{
+  "readinessScore": number,
+  "readinessLabel": "Ready | Moderate | Needs Improvement",
+  "summary": "One-line insight",
+  "breakdown": {
+    "skills": number,
+    "internship": number,
+    "verification": number,
+    "academic": number
+  },
+  "keyReasons": ["", "", ""],
+  "improvementTips": ["", ""]
+}
+`;
+
+    try {
+        const response = await fetch("https://api.antigravity.ai/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${import.meta.env.VITE_ANTIGRAVITY_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "antigravity-placement-v1",
+                prompt: prompt,
+                temperature: 0.3
+            })
+        });
+
+        const data = await response.json();
+
+        // VERY IMPORTANT: parse JSON safely
+        // The API returns { output: "stringified json" }
+        return JSON.parse(data.output);
+    } catch (error) {
+        console.error("AI Evaluation Error:", error);
+        return generateMockEvaluation(student, job);
+    }
+}
+
+/**
+ * Generate mock evaluation for fallback
+ */
+const generateMockEvaluation = (candidate, jobRole) => {
+    return {
+        readinessScore: 75,
+        readinessLabel: "Ready",
+        summary: "Strong candidate with good skill match but brief experience.",
+        breakdown: {
+            skills: 80,
+            internship: 70,
+            verification: 100,
+            academic: 85
+        },
+        keyReasons: [
+            "Good match on core skills",
+            "Internship experience is relevant but brief",
+            "Academic performance is strong"
+        ],
+        improvementTips: [
+            "Gain more hands-on experience",
+            "Complete advanced certification"
+        ]
+    };
 };
 
 export default {
@@ -268,5 +498,7 @@ export default {
     generateCandidateInsights,
     analyzeSkillGaps,
     predictPlacementProbability,
-    generateInstitutionalRecommendations
+    generateInstitutionalRecommendations,
+    evaluatePlacementReadiness,
+    runPlacementEvaluation
 };

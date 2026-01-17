@@ -64,18 +64,18 @@ export const calculateMatchScore = (candidate, jobRequirements) => {
  */
 const calculateSkillsMatch = (candidateSkills, requiredSkills) => {
     if (!requiredSkills.length) return 100;
-    
+
     const candidateSkillsLower = candidateSkills.map(s => s.toLowerCase());
-    const matchedSkills = requiredSkills.filter(skill => 
+    const matchedSkills = requiredSkills.filter(skill =>
         candidateSkillsLower.includes(skill.toLowerCase())
     );
-    
+
     const directMatch = (matchedSkills.length / requiredSkills.length) * 100;
-    
+
     // Add bonus for extra relevant skills
     const bonusSkills = candidateSkills.length - matchedSkills.length;
     const bonus = Math.min(bonusSkills * 2, 20);
-    
+
     return Math.min(directMatch + bonus, 100);
 };
 
@@ -84,7 +84,7 @@ const calculateSkillsMatch = (candidateSkills, requiredSkills) => {
  */
 const calculateAcademicFit = (cgpa, branch, minCGPA, preferredBranches) => {
     let score = 0;
-    
+
     // CGPA scoring (60% of academic score)
     if (cgpa >= minCGPA) {
         const cgpaExcess = cgpa - minCGPA;
@@ -92,14 +92,14 @@ const calculateAcademicFit = (cgpa, branch, minCGPA, preferredBranches) => {
     } else {
         score += (cgpa / minCGPA) * 60 * 0.6;
     }
-    
+
     // Branch scoring (40% of academic score)
     if (preferredBranches.length === 0 || preferredBranches.includes(branch)) {
         score += 40 * 0.4;
     } else {
         score += 20 * 0.4; // Partial credit for other branches
     }
-    
+
     return Math.round(score);
 };
 
@@ -108,24 +108,24 @@ const calculateAcademicFit = (cgpa, branch, minCGPA, preferredBranches) => {
  */
 const calculateExperienceRelevance = (internships, experienceType) => {
     if (!internships.length) return 30; // Base score for no experience
-    
+
     let score = 50; // Base score for having experience
-    
+
     // Check for relevant internships
-    const relevantInternships = internships.filter(internship => 
+    const relevantInternships = internships.filter(internship =>
         internship.type?.toLowerCase().includes(experienceType.toLowerCase()) ||
         internship.role?.toLowerCase().includes(experienceType.toLowerCase())
     );
-    
+
     if (relevantInternships.length > 0) {
         score += 30; // Bonus for relevant experience
-        
+
         // Additional bonus for multiple relevant internships
         if (relevantInternships.length > 1) {
             score += Math.min((relevantInternships.length - 1) * 10, 20);
         }
     }
-    
+
     return Math.min(score, 100);
 };
 
@@ -164,12 +164,12 @@ export const filterByEligibility = (candidates, criteria) => {
             if (criteria.minCGPA && candidate.cgpa < criteria.minCGPA) {
                 return false;
             }
-            
+
             // Branch filter
             if (criteria.branches?.length && !criteria.branches.includes(candidate.branch)) {
                 return false;
             }
-            
+
             // Skills filter (must have at least one required skill)
             if (criteria.requiredSkills?.length) {
                 const hasRequiredSkill = criteria.requiredSkills.some(skill =>
@@ -177,12 +177,12 @@ export const filterByEligibility = (candidates, criteria) => {
                 );
                 if (!hasRequiredSkill) return false;
             }
-            
+
             // Internship experience filter
             if (criteria.requiresInternship && (!candidate.internships || candidate.internships.length === 0)) {
                 return false;
             }
-            
+
             return true;
         })
         .map(candidate => ({
@@ -200,18 +200,18 @@ export const filterByEligibility = (candidates, criteria) => {
 export const analyzeInternshipPlacementLink = (students) => {
     const withInternship = students.filter(s => s.internships?.length > 0);
     const withoutInternship = students.filter(s => !s.internships?.length);
-    
+
     const internshipPlaced = withInternship.filter(s => s.placementStatus === 'placed').length;
     const noInternshipPlaced = withoutInternship.filter(s => s.placementStatus === 'placed').length;
-    
-    const conversionRate = withInternship.length > 0 
-        ? (internshipPlaced / withInternship.length) * 100 
+
+    const conversionRate = withInternship.length > 0
+        ? (internshipPlaced / withInternship.length) * 100
         : 0;
-    
+
     const noInternshipRate = withoutInternship.length > 0
         ? (noInternshipPlaced / withoutInternship.length) * 100
         : 0;
-    
+
     // Company-wise conversion
     const companyConversion = {};
     withInternship.forEach(student => {
@@ -226,7 +226,7 @@ export const analyzeInternshipPlacementLink = (students) => {
             }
         });
     });
-    
+
     return {
         totalStudents: students.length,
         withInternship: withInternship.length,
@@ -252,27 +252,27 @@ export const analyzeInternshipPlacementLink = (students) => {
 export const analyzeSkillGaps = (students, jobRequirements) => {
     const allStudentSkills = students.flatMap(s => s.skills || []);
     const skillFrequency = {};
-    
+
     allStudentSkills.forEach(skill => {
         const normalized = skill.toLowerCase();
         skillFrequency[normalized] = (skillFrequency[normalized] || 0) + 1;
     });
-    
+
     const requiredSkills = jobRequirements.flatMap(job => job.requiredSkills || []);
     const requiredFrequency = {};
-    
+
     requiredSkills.forEach(skill => {
         const normalized = skill.toLowerCase();
         requiredFrequency[normalized] = (requiredFrequency[normalized] || 0) + 1;
     });
-    
+
     // Find gaps
     const gaps = [];
     Object.keys(requiredFrequency).forEach(skill => {
         const demand = requiredFrequency[skill];
         const supply = skillFrequency[skill] || 0;
         const coverage = students.length > 0 ? (supply / students.length) * 100 : 0;
-        
+
         if (coverage < 50) {
             gaps.push({
                 skill,
@@ -284,7 +284,7 @@ export const analyzeSkillGaps = (students, jobRequirements) => {
             });
         }
     });
-    
+
     return {
         totalSkillsInMarket: Object.keys(requiredFrequency).length,
         totalSkillsInCohort: Object.keys(skillFrequency).length,
@@ -300,9 +300,25 @@ export const analyzeSkillGaps = (students, jobRequirements) => {
     };
 };
 
+import { runPlacementEvaluation } from './geminiAI';
+
+/**
+ * Get AI-powered placement evaluation
+ * @param {Object} candidate - Student profile
+ * @param {Object} jobRequirements - Job requirements
+ * @returns {Promise<Object>} AI evaluation result
+ */
+export const getAIPlacementEvaluation = async (candidate, jobRequirements) => {
+    return await runPlacementEvaluation({
+        student: candidate,
+        job: jobRequirements
+    });
+};
+
 export default {
     calculateMatchScore,
     filterByEligibility,
     analyzeInternshipPlacementLink,
-    analyzeSkillGaps
+    analyzeSkillGaps,
+    getAIPlacementEvaluation
 };
