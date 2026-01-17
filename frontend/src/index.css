@@ -39,39 +39,74 @@
 
 @layer base {
   :root {
-    --background: 260 30% 98.5%;
-    --foreground: 265 60% 12%;
+    /* Premium Modern Palette */
+    --background: 240 30% 99%;
+    /* Cool white */
+    --foreground: 240 10% 3.9%;
+    /* Deep black-blue */
 
     --card: 0 0% 100%;
-    --card-foreground: 265 60% 12%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 265 60% 12%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 271 100% 66%;
-    --primary-foreground: 210 40% 98%;
+    /* Vibrant Violet Primary */
+    --primary: 265 89% 60%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 271 20% 95%;
-    --secondary-foreground: 271 100% 66%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 260 30% 95%;
-    --muted-foreground: 265 20% 45%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 271 100% 96%;
-    --accent-foreground: 271 100% 66%;
+    --accent: 265 89% 96%;
+    /* Light violet tint */
+    --accent-foreground: 265 89% 60%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 260 20% 92%;
-    --input: 260 20% 92%;
-    --ring: 271 100% 66%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 265 89% 60%;
 
     --radius: 1rem;
 
     /* Status Colors */
-    --success: 142 76% 45%;
-    --warning: 48 96% 53%;
+    --success: 142 70% 45%;
+    --warning: 38 92% 50%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 265 89% 60%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
@@ -83,5 +118,11 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image:
+      radial-gradient(at 0% 0%, hsla(265, 89%, 96%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(220, 100%, 96%, 1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(265, 89%, 96%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(220, 100%, 96%, 1) 0px, transparent 50%);
+    background-attachment: fixed;
   }
 }

@@ -39,6 +39,39 @@ export default function ProfileProofs() {
                     </Card>
 
                     <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle className="text-sm font-black uppercase tracking-widest">Resume & CV</CardTitle>
+                            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">Primary</Badge>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="border-2 border-dashed border-border hover:border-primary/50 transition-colors rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer bg-muted/5 group">
+                                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <FileText className="w-6 h-6 text-primary" />
+                                </div>
+                                <h3 className="text-sm font-bold text-foreground">Upload Resume</h3>
+                                <p className="text-xs text-muted-foreground mt-1 mb-4">PDF, DOCX up to 5MB</p>
+                                <button className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
+                                    Select File
+                                </button>
+                            </div>
+
+                            {/* Mock Uploaded File */}
+                            <div className="flex items-center justify-between p-4 bg-white border border-border rounded-xl shadow-sm">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                                        <FileText className="w-5 h-5 text-red-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold">Shubh_Sharma_Resume_v2.pdf</p>
+                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Uploaded 2 days ago • 1.2 MB</p>
+                                    </div>
+                                </div>
+                                <button className="text-xs font-bold text-primary hover:underline">View</button>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
                         <CardHeader>
                             <CardTitle className="text-sm font-black uppercase tracking-widest">Proof Documents</CardTitle>
                         </CardHeader>

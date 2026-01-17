@@ -14,7 +14,8 @@ export default function MockGoogleForm({ onSubmit, isOpen, onClose }) {
         startDate: '',
         endDate: '',
         skills: '',
-        description: ''
+        description: '',
+        certificate: ''
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -26,20 +27,20 @@ export default function MockGoogleForm({ onSubmit, isOpen, onClose }) {
             timestamp: new Date().toISOString(),
             status: 'pending'
         };
-        
+
         // Save to localStorage (mock Google Sheets)
         const existingData = JSON.parse(localStorage.getItem('mockGoogleSheetData') || '[]');
         existingData.push(submissionData);
         localStorage.setItem('mockGoogleSheetData', JSON.stringify(existingData));
-        
+
         setIsSubmitted(true);
         if (onSubmit) onSubmit(submissionData);
-        
+
         setTimeout(() => {
             setIsSubmitted(false);
             setFormData({
                 name: '', email: '', phone: '', rollNumber: '', company: '', role: '',
-                internshipType: 'internship', startDate: '', endDate: '', skills: '', description: ''
+                internshipType: 'internship', startDate: '', endDate: '', skills: '', description: '', certificate: ''
             });
             if (onClose) onClose();
         }, 2000);
@@ -82,7 +83,7 @@ export default function MockGoogleForm({ onSubmit, isOpen, onClose }) {
                                     <p className="text-blue-100 text-sm mt-1">CampusCred Data Collection</p>
                                 </div>
                             </div>
-                            <button 
+                            <button
                                 onClick={onClose}
                                 className="text-white/80 hover:text-white text-2xl font-bold"
                             >
@@ -90,7 +91,7 @@ export default function MockGoogleForm({ onSubmit, isOpen, onClose }) {
                             </button>
                         </div>
                     </CardHeader>
-                    
+
                     <CardContent className="p-8">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -240,6 +241,29 @@ export default function MockGoogleForm({ onSubmit, isOpen, onClose }) {
                                     className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                                     placeholder="Brief description of your work and achievements..."
                                 />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                    <FileText className="w-4 h-4" /> Certificate / Proof
+                                </label>
+                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:border-blue-500 transition-colors cursor-pointer bg-gray-50">
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        id="certificate-upload"
+                                        onChange={(e) => handleChange('certificate', e.target.files[0]?.name)}
+                                    />
+                                    <label htmlFor="certificate-upload" className="cursor-pointer flex flex-col items-center">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                                            <FileText className="w-5 h-5 text-blue-600" />
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-700">
+                                            {formData.certificate ? formData.certificate : "Click to upload certificate"}
+                                        </span>
+                                        <span className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 5MB</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <div className="flex gap-4 pt-4">

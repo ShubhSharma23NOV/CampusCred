@@ -28,6 +28,7 @@ function App() {
   const [recruiterTab, setRecruiterTab] = useState('dashboard')
   const [selectedCandidate, setSelectedCandidate] = useState(null)
   const [tpoTab, setTpoTab] = useState('dashboard')
+  const [showNotifications, setShowNotifications] = useState(false)
 
   const handleLogin = (role = 'student') => {
     if (role && typeof role === 'string') setView(role)
@@ -62,7 +63,7 @@ function App() {
     <div className="min-h-screen bg-background flex flex-col font-sans selection:bg-primary/20 overflow-x-hidden">
       {/* Top Floating Header */}
       <div className="px-4 md:px-6 py-4 sticky top-0 z-50">
-        <header className="max-w-7xl mx-auto min-h-20 bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl shadow-primary/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-wrap items-center justify-between p-4 px-6 md:px-8 transition-all gap-4">
+        <header className="max-w-7xl mx-auto min-h-20 bg-white/70 backdrop-blur-2xl border border-white/50 shadow-2xl shadow-primary/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-wrap items-center justify-between p-4 px-6 md:px-8 transition-all gap-4 ring-1 ring-white/50">
           <div className="flex items-center gap-4 md:gap-10 shrink-0">
             <div className="flex items-center gap-2 md:gap-3 group cursor-pointer" onClick={() => setCurrentPage('dashboard')}>
               <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden shadow-lg shadow-primary/30 group-hover:rotate-12 transition-transform bg-white p-0.5">
@@ -88,10 +89,120 @@ function App() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
-              <button className="p-2 md:p-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl md:rounded-2xl transition-all relative group">
-                <Bell className="w-4 h-4 md:w-5 md:h-5 group-hover:shake" />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-destructive rounded-full border-2 border-white" />
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="p-2 md:p-2.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl md:rounded-2xl transition-all relative group"
+                >
+                  <Bell className="w-4 h-4 md:w-5 md:h-5 group-hover:shake" />
+                  <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-destructive rounded-full border-2 border-white" />
+                </button>
+
+                {/* Notification Dropdown */}
+                {showNotifications && (
+                  <div className="absolute right-0 top-full mt-4 w-80 md:w-96 bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl shadow-primary/10 rounded-3xl p-4 animate-in fade-in slide-in-from-top-2 z-50 ring-1 ring-black/5">
+                    <div className="flex items-center justify-between mb-4 px-2">
+                      <h3 className="text-sm font-black uppercase tracking-widest text-foreground">Notifications</h3>
+                      <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-1 rounded-full">3 New</span>
+                    </div>
+
+                    <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
+                      {view === 'student' && (
+                        <>
+                          <div className="p-3 bg-white rounded-2xl border border-border/50 hover:border-primary/20 transition-colors cursor-pointer group">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                <Sparkles className="w-4 h-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">Google Hiring Alert! 🚀</p>
+                                <p className="text-xs text-muted-foreground mt-1">SDE Intern roles are open. Apply now!</p>
+                                <p className="text-[10px] font-black text-primary/60 uppercase tracking-wider mt-2">Just Now</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-3 bg-white rounded-2xl border border-border/50 hover:border-primary/20 transition-colors cursor-pointer group">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                <Briefcase className="w-4 h-4 text-indigo-600" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground group-hover:text-indigo-600 transition-colors">Microsoft Drive</p>
+                                <p className="text-xs text-muted-foreground mt-1">Applications live for 2026 batch.</p>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mt-2">2h Ago</p>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {view === 'recruiter' && (
+                        <>
+                          <div className="p-3 bg-white rounded-2xl border border-border/50 hover:border-blue-500/20 transition-colors cursor-pointer group">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                <UserCircle className="w-4 h-4 text-blue-600" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground group-hover:text-blue-600 transition-colors">Shubh Sharma Applied</p>
+                                <p className="text-xs text-muted-foreground mt-1">New application for SDE Intern role.</p>
+                                <p className="text-[10px] font-black text-blue-600/60 uppercase tracking-wider mt-2">5m Ago</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-3 bg-white rounded-2xl border border-border/50 hover:border-purple-500/20 transition-colors cursor-pointer group">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 bg-purple-50 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                <UserCircle className="w-4 h-4 text-purple-600" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground group-hover:text-purple-600 transition-colors">Rahul Verma Applied</p>
+                                <p className="text-xs text-muted-foreground mt-1">Frontend Dev role application.</p>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mt-2">1h Ago</p>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {view === 'tpo' && (
+                        <>
+                          <div className="p-3 bg-white rounded-2xl border border-border/50 hover:border-emerald-500/20 transition-colors cursor-pointer group">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                <FileCheck className="w-4 h-4 text-emerald-600" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground group-hover:text-emerald-600 transition-colors">Placement Confirmed! 🎉</p>
+                                <p className="text-xs text-muted-foreground mt-1">Shubh Sharma placed at Google.</p>
+                                <p className="text-[10px] font-black text-emerald-600/60 uppercase tracking-wider mt-2">Just Now</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-3 bg-white rounded-2xl border border-border/50 hover:border-rose-500/20 transition-colors cursor-pointer group">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 bg-rose-50 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                <ShieldCheck className="w-4 h-4 text-rose-600" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground group-hover:text-rose-600 transition-colors">Verification Pending</p>
+                                <p className="text-xs text-muted-foreground mt-1">Anjali Gupta's internship cert needs review.</p>
+                                <p className="text-[10px] font-black text-rose-600/60 uppercase tracking-wider mt-2">30m Ago</p>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-border/50 text-center">
+                      <button className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors">
+                        View All Activity
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {view === 'student' && (
                 <button
@@ -329,7 +440,7 @@ function App() {
       </main>
 
       {/* Floating Modern Footer */}
-      <footer className="py-8 px-10 border-t border-border/30 bg-white/50 backdrop-blur-sm flex flex-col md:flex-row justify-between items-center gap-6 mt-auto">
+      <footer className="py-8 px-10 border-t border-white/20 bg-white/30 backdrop-blur-md flex flex-col md:flex-row justify-between items-center gap-6 mt-auto shadow-lg shadow-black/5">
         <div className="flex items-center gap-3 text-[11px] text-muted-foreground font-bold uppercase tracking-wider">
           <div className="w-2 h-2 rounded-full bg-success shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
           Systems Active | Stable Connection

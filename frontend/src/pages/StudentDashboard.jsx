@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Progress } from "@/components/DesignSystem";
-import { ShieldCheck, Zap, BarChart3, Clock, CheckCircle2, AlertCircle, Plus, FileText, Sparkles, Bot } from "lucide-react";
+import { ShieldCheck, Zap, BarChart3, Clock, CheckCircle2, AlertCircle, Plus, FileText, Sparkles, Bot, Building2 } from "lucide-react";
 import MockGoogleForm from "@/components/MockGoogleForm";
 import RecruitmentAssistant from "@/components/RecruitmentAssistant";
 
@@ -44,8 +44,6 @@ export default function StudentDashboard() {
                     </button>
                 </div>
             </header>
-
-
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
@@ -154,4 +152,3 @@ export default function StudentDashboard() {
         </div>
     );
 }
-

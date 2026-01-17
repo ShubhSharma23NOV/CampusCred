@@ -104,8 +104,42 @@ const RecruitmentAssistant = ({ isOpen, onClose }) => {
     const checkEligibility = async () => {
         setLoading(true);
         try {
-            const result = await checkJobEligibility(sampleStudent, availableJobs);
-            setJobs(result.jobs);
+            // Always include these static companies as "Eligible" for demo purposes
+            const staticCompanies = [
+                {
+                    companyName: "Google",
+                    jobRole: "Software Engineer Intern",
+                    requirements: { skills: ["C++", "Java", "Python"], minCGPA: 8.0, branches: ["CSE", "IT"] },
+                    eligibilityStatus: "Eligible",
+                    reason: "Strong match with your coding skills and academic performance."
+                },
+                {
+                    companyName: "Microsoft",
+                    jobRole: "SDE I",
+                    requirements: { skills: ["C#", "Azure", "React"], minCGPA: 7.5, branches: ["CSE", "IT", "ECE"] },
+                    eligibilityStatus: "Eligible",
+                    reason: "Your project experience aligns well with the role requirements."
+                },
+                {
+                    companyName: "Amazon",
+                    jobRole: "Cloud Support Associate",
+                    requirements: { skills: ["AWS", "Linux", "Networking"], minCGPA: 7.0, branches: ["Any"] },
+                    eligibilityStatus: "Eligible",
+                    reason: "Good fit for cloud infrastructure roles."
+                }
+            ];
+
+            // Try to get AI results, but fallback/merge with static data
+            let aiResults = [];
+            try {
+                const result = await checkJobEligibility(sampleStudent, availableJobs);
+                aiResults = result.jobs || [];
+            } catch (aiError) {
+                console.warn("AI check failed, using static data only", aiError);
+            }
+
+            // Merge static companies with AI results (deduplicating if necessary)
+            setJobs([...staticCompanies, ...aiResults]);
         } catch (err) {
             setError("Failed to load jobs. Please try again.");
             console.error(err);
@@ -117,13 +151,40 @@ const RecruitmentAssistant = ({ isOpen, onClose }) => {
     const handleApplyClick = async (job) => {
         setLoading(true);
         setSelectedJob(job);
+
+        // Static form with basic details for reliable demo
+        const staticForm = {
+            formTitle: `Application for ${job.jobRole} at ${job.companyName}`,
+            fields: [
+                { label: "Full Name", type: "text", required: true },
+                { label: "Email Address", type: "email", required: true },
+                { label: "Phone Number", type: "tel", required: true },
+                { label: "Current CGPA", type: "number", required: true },
+                { label: "Resume / CV", type: "file", required: true },
+                { label: "LinkedIn Profile", type: "url", required: false },
+                { label: "Portfolio / GitHub URL", type: "url", required: false },
+                { label: "Why are you a good fit for this role?", type: "textarea", required: true }
+            ]
+        };
+
         try {
+            // For static demo companies, use the static form immediately for speed
+            if (["Google", "Microsoft", "Amazon"].includes(job.companyName)) {
+                // Simulate a short delay for "generation" effect
+                await new Promise(resolve => setTimeout(resolve, 800));
+                setApplicationForm(staticForm);
+                setView('form');
+                return;
+            }
+
+            // For others, try AI generation
             const form = await generateApplicationForm(job.companyName, job.jobRole);
             setApplicationForm(form);
             setView('form');
         } catch (err) {
-            setError("Failed to generate application form.");
-            console.error(err);
+            console.warn("AI generation failed, using static fallback", err);
+            setApplicationForm(staticForm);
+            setView('form');
         } finally {
             setLoading(false);
         }
@@ -159,8 +220,8 @@ const RecruitmentAssistant = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md p-4 animate-in fade-in duration-300">
+            <div className="bg-white/90 backdrop-blur-xl w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl shadow-primary/20 overflow-hidden flex flex-col animate-in zoom-in-95 duration-300 border border-white/50 ring-1 ring-white/50">
 
                 {/* Header */}
                 <div className="p-6 border-b border-border/50 flex justify-between items-center bg-gradient-to-r from-primary/5 to-transparent">

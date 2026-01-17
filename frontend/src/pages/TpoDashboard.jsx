@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge } from "@/components/DesignSystem";
-import { Users, CheckCircle, Clock, ShieldAlert, ArrowUpRight } from "lucide-react";
+import { Users, CheckCircle, Clock, ShieldAlert, ArrowUpRight, Bell } from "lucide-react";
 
 export default function TpoDashboard() {
     const stats = [
