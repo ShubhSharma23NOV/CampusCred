@@ -300,7 +300,7 @@ export const analyzeSkillGaps = (students, jobRequirements) => {
     };
 };
 
-import { runPlacementEvaluation } from './geminiAI';
+import { runPlacementEvaluation, runRecruitmentAssistant } from './geminiAI';
 
 /**
  * Get AI-powered placement evaluation
@@ -315,10 +315,24 @@ export const getAIPlacementEvaluation = async (candidate, jobRequirements) => {
     });
 };
 
+/**
+ * Get AI-powered recruitment assistant result
+ * @param {Object} company - Company details
+ * @param {Object} student - Student profile
+ * @returns {Promise<Object>} AI recruitment result
+ */
+export const getAIRecruitmentAssistant = async (company, student) => {
+    return await runRecruitmentAssistant({
+        company,
+        student
+    });
+};
+
 export default {
     calculateMatchScore,
     filterByEligibility,
     analyzeInternshipPlacementLink,
     analyzeSkillGaps,
-    getAIPlacementEvaluation
+    getAIPlacementEvaluation,
+    getAIRecruitmentAssistant
 };

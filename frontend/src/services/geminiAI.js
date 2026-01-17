@@ -443,24 +443,28 @@ Output Format (STRICT JSON only):
 `;
 
     try {
-        const response = await fetch("https://api.antigravity.ai/generate", {
+        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${import.meta.env.VITE_ANTIGRAVITY_API_KEY}`
             },
             body: JSON.stringify({
-                model: "antigravity-placement-v1",
-                prompt: prompt,
-                temperature: 0.3
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
             })
         });
 
         const data = await response.json();
+        const text = data.candidates[0]?.content?.parts[0]?.text;
 
-        // VERY IMPORTANT: parse JSON safely
-        // The API returns { output: "stringified json" }
-        return JSON.parse(data.output);
+        if (!text) throw new Error("No response from Gemini");
+
+        // Clean up markdown code blocks if present
+        const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        return JSON.parse(cleanedText);
     } catch (error) {
         console.error("AI Evaluation Error:", error);
         return generateMockEvaluation(student, job);
@@ -493,6 +497,288 @@ const generateMockEvaluation = (candidate, jobRole) => {
     };
 };
 
+/**
+ * Run recruitment assistant using Antigravity API
+ * @param {Object} params - { company, student }
+ * @returns {Promise<Object>} Recruitment result
+ */
+export async function runRecruitmentAssistant({
+    company,
+    student
+}) {
+    const prompt = `
+You are an AI recruitment assistant for a campus placement platform.
+
+Your task:
+1. Present company placement information in a student-friendly way.
+2. Clearly list job role requirements and eligibility criteria.
+3. Generate an application form that a student must fill to apply.
+
+Company Information:
+- Company Name: ${company.name}
+- Job Role: ${company.role}
+- Job Domain: ${company.domain}
+- Required Skills: ${company.requiredSkills.join(", ")}
+- Minimum CGPA: ${company.minCgpa}
+- Eligible Branches: ${company.eligibleBranches.join(", ")}
+- Internship Preferred: ${company.internshipRequired ? "Yes" : "No"}
+
+Student Profile:
+- Name: ${student.name}
+- Branch: ${student.branch}
+- CGPA: ${student.cgpa}
+- Skills: ${student.skills.join(", ")}
+
+Instructions:
+- Clearly mention if the student is eligible or not.
+- If eligible, generate an “Apply Now” form.
+- Keep language simple and professional.
+
+Output Format (STRICT JSON):
+
+{
+  "companyOverview": {
+    "companyName": "",
+    "jobRole": "",
+    "jobDomain": ""
+  },
+  "eligibilityStatus": "Eligible | Not Eligible",
+  "requirements": {
+    "skills": [],
+    "minCGPA": number,
+    "branches": [],
+    "internshipPreference": ""
+  },
+  "applyForm": {
+    "fields": [
+      { "label": "Full Name", "type": "text", "required": true },
+      { "label": "Email", "type": "email", "required": true },
+      { "label": "Resume Link", "type": "url", "required": true },
+      { "label": "Why should we hire you?", "type": "textarea", "required": true },
+      { "label": "Relevant Skills", "type": "text", "required": true }
+    ]
+  }
+}
+`;
+
+    try {
+        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        const text = data.candidates[0]?.content?.parts[0]?.text;
+
+        if (!text) throw new Error("No response from Gemini");
+
+        // Clean up markdown code blocks if present
+        const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        return JSON.parse(cleanedText);
+    } catch (error) {
+        console.error("AI Recruitment Assistant Error:", error);
+        return {
+            eligibilityStatus: "Error",
+            companyOverview: { companyName: company.name, jobRole: company.role, jobDomain: company.domain },
+            requirements: { skills: [], minCGPA: 0, branches: [], internshipPreference: "" },
+            applyForm: { fields: [] }
+        };
+    }
+}
+
+/**
+ * Check eligibility for multiple jobs
+ * @param {Object} student - Student profile
+ * @param {Array} jobsList - List of available jobs
+ * @returns {Promise<Object>} Eligibility results
+ */
+export async function checkJobEligibility(student, jobsList) {
+    const prompt = `
+You are an AI placement assistant for students.
+
+Your task:
+1. Show a list of companies currently open for placements.
+2. For each company, display job role and requirements.
+3. Check whether the student is eligible.
+4. Clearly mark jobs as “Eligible” or “Not Eligible”.
+
+Student Profile:
+- Name: ${student.name}
+- Branch: ${student.branch}
+- CGPA: ${student.cgpa}
+- Skills: ${student.skills.join(", ")}
+
+Available Jobs:
+${JSON.stringify(jobsList, null, 2)}
+
+Instructions:
+- Compare student profile with each job.
+- Eligibility depends on CGPA, branch, and skills.
+- Keep output structured for frontend rendering.
+
+Output Format (STRICT JSON):
+
+{
+  "jobs": [
+    {
+      "companyName": "",
+      "jobRole": "",
+      "requirements": {
+        "skills": [],
+        "minCGPA": number,
+        "branches": []
+      },
+      "eligibilityStatus": "Eligible | Not Eligible",
+      "reason": ""
+    }
+  ]
+}
+`;
+
+    return callGemini(prompt);
+}
+
+/**
+ * Generate application form for a specific job
+ * @param {string} companyName 
+ * @param {string} jobRole 
+ * @returns {Promise<Object>} Form structure
+ */
+export async function generateApplicationForm(companyName, jobRole) {
+    const prompt = `
+You are an AI form generator for campus placements.
+
+Your task:
+1. Generate a job application form for a student.
+2. The form should be similar to Google Forms.
+3. Include only relevant fields for recruiters.
+
+Job Details:
+- Company Name: ${companyName}
+- Job Role: ${jobRole}
+
+Output Format (STRICT JSON):
+
+{
+  "formTitle": "",
+  "fields": [
+    { "label": "Full Name", "type": "text", "required": true },
+    { "label": "Email ID", "type": "email", "required": true },
+    { "label": "Resume Link", "type": "url", "required": true },
+    { "label": "Relevant Skills", "type": "text", "required": true },
+    { "label": "Why should we hire you?", "type": "textarea", "required": true }
+  ]
+}
+`;
+
+    return callGemini(prompt);
+}
+
+/**
+ * Analyze a student application for a recruiter
+ * @param {string} companyName 
+ * @param {string} jobRole 
+ * @param {Object} application - The full application data
+ * @returns {Promise<Object>} Analysis result
+ */
+export async function analyzeApplication(companyName, jobRole, application) {
+    const prompt = `
+You are an AI recruiter assistant.
+
+Your task:
+1. Analyze student applications for a job.
+2. Summarize each applicant clearly.
+3. Help recruiter quickly decide.
+
+Job Details:
+- Company Name: ${companyName}
+- Job Role: ${jobRole}
+
+Student Application:
+${JSON.stringify(application, null, 2)}
+
+Output Format (STRICT JSON):
+
+{
+  "applicantCard": {
+    "name": "",
+    "branch": "",
+    "cgpa": number,
+    "skills": [],
+    "placementReadiness": number
+  },
+  "strengths": [],
+  "concerns": [],
+  "recommendation": "Strong Fit | Moderate Fit | Not Recommended"
+}
+`;
+
+    return callGemini(prompt);
+}
+
+/**
+ * Filter candidates based on eligibility criteria
+ * @param {Array} candidates - List of candidates
+ * @param {Object} criteria - Filter criteria
+ * @returns {Array} Filtered candidates
+ */
+export function filterByEligibility(candidates, criteria) {
+    return candidates.filter(candidate => {
+        // Filter by skills (if any match)
+        if (criteria.skills && criteria.skills.length > 0) {
+            const hasSkill = criteria.skills.some(skill =>
+                candidate.skills.some(s => s.toLowerCase().includes(skill.toLowerCase()))
+            );
+            if (!hasSkill) return false;
+        }
+
+        // Filter by verification status
+        if (criteria.verifiedOnly && !candidate.verified) {
+            return false;
+        }
+
+        // Filter by minimum CGPA
+        if (criteria.minCgpa && candidate.cgpa < criteria.minCgpa) {
+            return false;
+        }
+
+        return true;
+    });
+}
+
+// Helper to call Gemini and parse JSON
+async function callGemini(prompt) {
+    try {
+        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!text) throw new Error("No response from Gemini");
+
+        const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        return JSON.parse(cleanedText);
+    } catch (error) {
+        console.error("Gemini API Error:", error);
+        throw error;
+    }
+}
+
 export default {
     isGeminiConfigured,
     generateCandidateInsights,
@@ -500,5 +786,10 @@ export default {
     predictPlacementProbability,
     generateInstitutionalRecommendations,
     evaluatePlacementReadiness,
-    runPlacementEvaluation
+    runPlacementEvaluation,
+    runRecruitmentAssistant,
+    checkJobEligibility,
+    generateApplicationForm,
+    analyzeApplication,
+    filterByEligibility
 };

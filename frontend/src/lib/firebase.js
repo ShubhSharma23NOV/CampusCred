@@ -9,13 +9,13 @@ import { getAnalytics } from "firebase/analytics";
 // Firebase Configuration
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAKT1NVUR28PMu70yhxNlFRhyv_ANefbKQ",
-    authDomain: "campuscred-dcc8e.firebaseapp.com",
-    projectId: "campuscred-dcc8e",
-    storageBucket: "campuscred-dcc8e.firebasestorage.app",
-    messagingSenderId: "278574170158",
-    appId: "1:278574170158:web:a9ca7df41e9cb0bc46dfbf",
-    measurementId: "G-W5BX6CENVQ"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
@@ -39,8 +39,8 @@ export { messaging };
 
 // Helper function to check if Firebase is configured
 export const isFirebaseConfigured = () => {
-    return firebaseConfig.apiKey !== "YOUR_API_KEY" && 
-           firebaseConfig.projectId !== "campuscred-demo";
+    return firebaseConfig.apiKey !== "YOUR_API_KEY" &&
+        firebaseConfig.projectId !== "campuscred-demo";
 };
 
 export default app;

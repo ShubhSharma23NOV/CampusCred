@@ -182,8 +182,8 @@ const TestAI = () => {
                             <div className="text-right">
                                 <div className="text-3xl font-black text-primary">{result.readinessScore}/100</div>
                                 <div className={`text-sm font-bold px-3 py-1 rounded-full inline-block mt-1 ${result.readinessLabel === 'Ready' ? 'bg-green-100 text-green-700' :
-                                        result.readinessLabel === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                                            'bg-red-100 text-red-700'
+                                    result.readinessLabel === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
+                                        'bg-red-100 text-red-700'
                                     }`}>
                                     {result.readinessLabel}
                                 </div>

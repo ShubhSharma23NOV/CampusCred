@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Progress } from "@/components/DesignSystem";
-import { ShieldCheck, Zap, BarChart3, Clock, CheckCircle2, AlertCircle, Plus, FileText, Sparkles } from "lucide-react";
+import { ShieldCheck, Zap, BarChart3, Clock, CheckCircle2, AlertCircle, Plus, FileText, Sparkles, Bot } from "lucide-react";
 import MockGoogleForm from "@/components/MockGoogleForm";
+import RecruitmentAssistant from "@/components/RecruitmentAssistant";
 
 export default function StudentDashboard() {
     const [showForm, setShowForm] = useState(false);
+    const [showAssistant, setShowAssistant] = useState(false);
     const [stats, setStats] = useState({
         verified: 12,
         active: 3,
@@ -26,13 +28,21 @@ export default function StudentDashboard() {
                     <h1 className="text-3xl font-black tracking-tight">Student Dashboard</h1>
                     <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Credibility Overview</p>
                 </div>
-                <button
-                    onClick={() => setShowForm(true)}
-                    className="px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-3"
-                >
-                    <Plus className="w-5 h-5" /> Log New Experience
-                    <Sparkles className="w-4 h-4 animate-pulse" />
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setShowForm(true)}
+                        className="px-4 py-3 bg-white border-2 border-primary/10 text-primary font-black rounded-2xl hover:bg-primary/5 hover:-translate-y-0.5 active:scale-95 transition-all text-xs uppercase tracking-widest flex items-center gap-2"
+                    >
+                        <Plus className="w-4 h-4" /> Log Experience
+                    </button>
+                    <button
+                        onClick={() => setShowAssistant(true)}
+                        className="px-8 py-3 bg-gradient-to-r from-primary to-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-3"
+                    >
+                        <Bot className="w-5 h-5" /> Apply for Opportunity
+                        <Sparkles className="w-4 h-4 animate-pulse" />
+                    </button>
+                </div>
             </header>
 
 
@@ -136,6 +146,12 @@ export default function StudentDashboard() {
                 onClose={() => setShowForm(false)}
                 onSubmit={handleFormSubmit}
             />
+
+            <RecruitmentAssistant
+                isOpen={showAssistant}
+                onClose={() => setShowAssistant(false)}
+            />
         </div>
     );
 }
+
