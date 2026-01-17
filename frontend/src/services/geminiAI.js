@@ -277,25 +277,19 @@ export const evaluatePlacementReadiness = async (candidate, jobRole) => {
 
     try {
         const prompt = `
-You are an AI placement readiness engine for a campus recruitment platform.
+You are an AI career coach for a campus recruitment platform.
 
 Your task:
-1. Evaluate a student profile against a job role.
+1. Evaluate the student's personal profile against a target job role.
 2. Generate a Placement Readiness Score (0–100).
-3. Assign a readiness label for dashboard display.
-4. Provide structured, explainable insights suitable for a UI widget.
+3. Assign a readiness label for the student's dashboard display.
+4. Provide structured, encouraging, and actionable insights addressed directly to the student.
 
 Scoring Weights:
 - Skills Match: 40%
 - Internship Relevance: 25%
 - Verification & Credibility: 20%
 - Academic Performance (CGPA): 15%
-
-Evaluation Rules:
-- Match student skills with job-required skills.
-- Prioritize domain-relevant internships.
-- Fully verified profiles should score highest in credibility.
-- CGPA should support skills, not dominate the outcome.
 
 Input:
 Student Profile:
@@ -309,12 +303,14 @@ Job Role:
 - Required Skills: ${jobRole.requiredSkills?.join(', ') || 'General'}
 - Job Domain: ${jobRole.domain || 'General'}
 
+Instruction for AI: Use 'You' and 'Your' to address the student directly. Be encouraging and focus on growth.
+
 Output Format (STRICT JSON, no extra text):
 
 {
   "readinessScore": number,
   "readinessLabel": "Ready | Moderate | Needs Improvement",
-  "summary": "One-line human-readable insight",
+  "summary": "One-line encouraging insight addressed to the student",
   "breakdown": {
     "skills": number,
     "internship": number,
@@ -322,13 +318,13 @@ Output Format (STRICT JSON, no extra text):
     "academic": number
   },
   "keyReasons": [
-    "Reason 1",
-    "Reason 2",
-    "Reason 3"
+    "Encouraging Reason 1",
+    "Encouraging Reason 2",
+    "Encouraging Reason 3"
   ],
   "improvementTips": [
-    "Tip 1",
-    "Tip 2"
+    "Personalized Tip 1",
+    "Personalized Tip 2"
   ]
 }
 
@@ -400,13 +396,13 @@ export async function runPlacementEvaluation({
     job
 }) {
     const prompt = `
-You are an AI placement readiness engine for a campus recruitment platform.
+You are an AI career coach for a campus placement platform.
 
 Your task:
-1. Evaluate a student profile against a job role.
-2. Generate a Placement Readiness Score (0–100).
-3. Assign a readiness label for dashboard display.
-4. Provide structured, explainable insights suitable for a UI widget.
+1. Evaluate the student's personal profile against a target job role.
+2. Generate a Placement Readiness Score (0–100) that reflects their fit.
+3. Assign a readiness label for the student's dashboard.
+4. Provide structured, encouraging, and actionable insights addressed directly to the student.
 
 Scoring Weights:
 - Skills Match: 40%
@@ -425,20 +421,22 @@ Job Role:
 - Required Skills: ${job.requiredSkills.join(", ")}
 - Job Domain: ${job.domain}
 
+Instruction for AI: Use 'You' and 'Your' to address the student directly. Be encouraging and focus on growth.
+
 Output Format (STRICT JSON only):
 
 {
   "readinessScore": number,
   "readinessLabel": "Ready | Moderate | Needs Improvement",
-  "summary": "One-line insight",
+  "summary": "One-line encouraging insight addressed to the student",
   "breakdown": {
     "skills": number,
     "internship": number,
     "verification": number,
     "academic": number
   },
-  "keyReasons": ["", "", ""],
-  "improvementTips": ["", ""]
+  "keyReasons": ["Encouraging reason 1", "Encouraging reason 2", "Encouraging reason 3"],
+  "improvementTips": ["Personalized tip 1", "Personalized tip 2"]
 }
 `;
 
@@ -478,7 +476,7 @@ const generateMockEvaluation = (candidate, jobRole) => {
     return {
         readinessScore: 75,
         readinessLabel: "Ready",
-        summary: "Strong candidate with good skill match but brief experience.",
+        summary: "You are a strong candidate with a great skill match! Focus on gaining a bit more experience to be fully prepared.",
         breakdown: {
             skills: 80,
             internship: 70,
@@ -486,13 +484,13 @@ const generateMockEvaluation = (candidate, jobRole) => {
             academic: 85
         },
         keyReasons: [
-            "Good match on core skills",
-            "Internship experience is relevant but brief",
-            "Academic performance is strong"
+            "Your core skills align perfectly with the job requirements",
+            "Your academic performance is consistently strong",
+            "You have relevant internship experience that adds value"
         ],
         improvementTips: [
-            "Gain more hands-on experience",
-            "Complete advanced certification"
+            "Try to take on more complex hands-on projects to deepen your expertise",
+            "Consider earning an advanced certification in your primary skill area"
         ]
     };
 };

@@ -7,6 +7,14 @@
 const POSTS_KEY = 'campuscred_recruiter_posts';
 const APPLICANTS_KEY = 'campuscred_post_applicants';
 
+export const POST_STATUS = {
+    DRAFT: 'DRAFT',
+    PENDING: 'PENDING_APPROVAL',
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+    CLOSED: 'CLOSED'
+};
+
 // Mock students data for matching demo
 const MOCK_STUDENTS = [
     { id: 'S101', name: 'Aman Gupta', role: 'Frontend Developer', skills: ['React', 'Tailwind', 'JavaScript'], cgpa: 8.5, credibility: 95, verifiedProofs: 12 },
@@ -42,13 +50,23 @@ export const recruiterPostsService = {
     // Create a new post
     createPost: (postData) => {
         const posts = getPosts();
+        const status = postData.status === 'Live' ? POST_STATUS.PENDING : (postData.status || POST_STATUS.DRAFT);
         const newPost = {
             ...postData,
             id: 'POST_' + Date.now(),
             applicantsCount: 0,
-            status: postData.status || 'Live',
+            status: status,
             createdAt: new Date().toISOString(),
+            submittedAt: status === POST_STATUS.PENDING ? new Date().toISOString() : null,
+            audit: [
+                { action: 'CREATED', timestamp: new Date().toISOString(), note: 'Initial creation' }
+            ]
         };
+
+        if (status === POST_STATUS.PENDING) {
+            newPost.audit.push({ action: 'SUBMITTED', timestamp: new Date().toISOString(), note: 'Submitted for TPO approval' });
+        }
+
         posts.unshift(newPost);
         savePosts(posts);
         return newPost;
@@ -190,8 +208,20 @@ export const recruiterPostsService = {
                 status: 'Live'
             });
 
+            // Transition seeded posts to Approved
+            const allPosts = recruiterPostsService.listPosts();
+            allPosts.forEach(p => {
+                if (p.status === POST_STATUS.PENDING) {
+                    recruiterPostsService.updatePost(p.id, {
+                        status: POST_STATUS.APPROVED,
+                        approvedAt: new Date().toISOString(),
+                        audit: [...p.audit, { action: 'APPROVED', actor: 'SYSTEM', timestamp: new Date().toISOString() }]
+                    });
+                }
+            });
+
             // Add some mock applicants
-            const updatedPosts = getPosts();
+            const updatedPosts = recruiterPostsService.listPosts();
             recruiterPostsService.applyToPost('S101', updatedPosts[0].id);
             recruiterPostsService.applyToPost('S102', updatedPosts[0].id);
             recruiterPostsService.applyToPost('S103', updatedPosts[1].id);

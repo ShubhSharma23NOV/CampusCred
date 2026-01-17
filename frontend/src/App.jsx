@@ -15,6 +15,7 @@ import RecruiterDashboard from './pages/RecruiterDashboard'
 import CandidateEvidenceView from './pages/CandidateEvidenceView'
 import DecisionPanel from './pages/DecisionPanel'
 import RecruiterPosts from './pages/RecruiterPosts'
+import AdminRecruiters from './pages/AdminRecruiters'
 import GoogleIntegration from './pages/GoogleIntegration'
 import InternshipPlacementAnalytics from './pages/InternshipPlacementAnalytics'
 import TestAI from './pages/TestAI'
@@ -394,6 +395,15 @@ function App() {
               <FileSpreadsheet className="w-3.5 h-3.5" /> Google
             </button>
             <button
+              onClick={() => setTpoTab('recruiters')}
+              className={cn(
+                "flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all",
+                tpoTab === 'recruiters' ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:bg-white/50 hover:text-foreground"
+              )}
+            >
+              <Users className="w-3.5 h-3.5" /> Recruiters
+            </button>
+            <button
               onClick={() => setTpoTab('analytics')}
               className={cn(
                 "flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all",
@@ -433,6 +443,7 @@ function App() {
               {tpoTab === 'tracking' && <PlacementTracking />}
               {tpoTab === 'reports' && <TpoReports />}
               {tpoTab === 'google' && <GoogleIntegration />}
+              {tpoTab === 'recruiters' && <AdminRecruiters />}
               {tpoTab === 'analytics' && <InternshipPlacementAnalytics />}
             </div>
           )}

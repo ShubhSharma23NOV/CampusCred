@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Dialog, DialogContent, DialogHeader, DialogTitle, Sheet, SheetContent } from "@/components/DesignSystem";
-import { Plus, Briefcase, MapPin, Users, Calendar, MoreVertical, LayoutDashboard, FileText, Send, Save, X, Search, Filter } from "lucide-react";
+import { Plus, Briefcase, MapPin, Users, Calendar, MoreVertical, LayoutDashboard, FileText, Send, Save, X, Search, Filter, Clock, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { recruiterPostsService } from "@/services/recruiterPostsService";
+import { recruiterPostsService, POST_STATUS } from "@/services/recruiterPostsService";
 import RecruiterApplicants from './RecruiterApplicants';
 
 export default function RecruiterPosts() {
@@ -32,8 +32,9 @@ export default function RecruiterPosts() {
         setPosts(recruiterPostsService.listPosts());
     }, []);
 
-    const handleCreatePost = (e, status = 'Live') => {
+    const handleCreatePost = (e, statusType = 'Live') => {
         e.preventDefault();
+        const status = statusType === 'Live' ? POST_STATUS.PENDING : POST_STATUS.DRAFT;
         const post = {
             ...formData,
             requiredSkills: formData.requiredSkills.split(',').map(s => s.trim()),
@@ -147,9 +148,21 @@ export default function RecruiterPosts() {
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={post.status === 'Live' ? 'success' : post.status === 'Closed' ? 'warning' : 'outline'} className="shadow-sm">
-                                            {post.status}
-                                        </Badge>
+                                        <div className="flex flex-col gap-1">
+                                            <Badge variant={
+                                                post.status === POST_STATUS.APPROVED ? 'success' :
+                                                    post.status === POST_STATUS.PENDING ? 'outline' :
+                                                        post.status === POST_STATUS.REJECTED ? 'warning' : 'outline'
+                                            } className="shadow-sm w-fit">
+                                                {post.status?.replace('_', ' ')}
+                                            </Badge>
+                                            {post.rejectionReason && (
+                                                <div className="flex items-center gap-1 text-[8px] font-bold text-rose-500 max-w-[150px]">
+                                                    <AlertCircle className="w-2 h-2 shrink-0" />
+                                                    <span className="truncate" title={post.rejectionReason}>Feedback: {post.rejectionReason}</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
