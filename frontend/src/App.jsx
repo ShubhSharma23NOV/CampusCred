@@ -14,7 +14,9 @@ import ProfileProofs from './pages/ProfileProofs'
 import RecruiterDashboard from './pages/RecruiterDashboard'
 import CandidateEvidenceView from './pages/CandidateEvidenceView'
 import DecisionPanel from './pages/DecisionPanel'
-import { ShieldCheck, Command, Search, Bell, Sparkles, LogOut, LayoutDashboard, History, Briefcase, BarChart3, UserCircle, Users, FileCheck, CheckSquare } from "lucide-react"
+import GoogleIntegration from './pages/GoogleIntegration'
+import InternshipPlacementAnalytics from './pages/InternshipPlacementAnalytics'
+import { ShieldCheck, Command, Search, Bell, Sparkles, LogOut, LayoutDashboard, History, Briefcase, BarChart3, UserCircle, Users, FileCheck, CheckSquare, FileSpreadsheet, Link2 } from "lucide-react"
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login')
@@ -237,6 +239,24 @@ function App() {
             >
               <BarChart3 className="w-3.5 h-3.5" /> Reports
             </button>
+            <button
+              onClick={() => setTpoTab('google')}
+              className={cn(
+                "flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all",
+                tpoTab === 'google' ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:bg-white/50 hover:text-foreground"
+              )}
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" /> Google
+            </button>
+            <button
+              onClick={() => setTpoTab('analytics')}
+              className={cn(
+                "flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all",
+                tpoTab === 'analytics' ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:bg-white/50 hover:text-foreground"
+              )}
+            >
+              <Link2 className="w-3.5 h-3.5" /> Analytics
+            </button>
           </nav>
         </div>
       )}
@@ -266,6 +286,8 @@ function App() {
               {tpoTab === 'verification' && <VerificationConsole />}
               {tpoTab === 'tracking' && <PlacementTracking />}
               {tpoTab === 'reports' && <TpoReports />}
+              {tpoTab === 'google' && <GoogleIntegration />}
+              {tpoTab === 'analytics' && <InternshipPlacementAnalytics />}
             </div>
           )}
         </div>

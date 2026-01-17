@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Separator } from "@/components/DesignSystem";
 import { CheckCircle2, XCircle, Download, FileSpreadsheet, Share2 } from "lucide-react";
+import MockGoogleSheet from "@/components/MockGoogleSheet";
 
 const shortlist = [
     { id: "ACRO_0991", name: "Shubh Sharma", role: "Fullstack Eng", score: 94, status: "Shortlisted", notes: "Strong frontend evidence." },
@@ -9,6 +10,8 @@ const shortlist = [
 ];
 
 export default function DecisionPanel() {
+    const [showSheet, setShowSheet] = useState(false);
+
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -17,7 +20,10 @@ export default function DecisionPanel() {
                     <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Track Decisions & Export Data</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="px-6 py-3 bg-white border border-border hover:bg-muted/50 rounded-2xl transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest">
+                    <button 
+                        onClick={() => setShowSheet(true)}
+                        className="px-6 py-3 bg-white border border-border hover:bg-muted/50 rounded-2xl transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest"
+                    >
                         <FileSpreadsheet className="w-4 h-4 text-emerald-600" /> Export to Sheets
                     </button>
                     <button className="px-6 py-3 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all text-xs uppercase tracking-widest flex items-center gap-2">
@@ -100,6 +106,11 @@ export default function DecisionPanel() {
                     </Table>
                 </Card>
             </div>
+
+            <MockGoogleSheet 
+                isOpen={showSheet} 
+                onClose={() => setShowSheet(false)}
+            />
         </div>
     );
 }

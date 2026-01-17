@@ -1,10 +1,28 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Progress, Separator } from "@/components/DesignSystem";
 import { ShieldCheck, Clock, ExternalLink, Activity, BarChart3, AlertCircle, Sparkles } from "lucide-react";
+import AIMatchingPanel from "@/components/AIMatchingPanel";
 
 export default function CandidateEvidenceView({ candidate }) {
     // Default to a sample candidate if none selected (for demo robustness)
-    const data = candidate || { id: "ACRO_0991", name: "Guest User", role: "Viewer" };
+    const data = candidate || { 
+        id: "ACRO_0991", 
+        name: "Guest User", 
+        role: "Viewer",
+        cgpa: 8.5,
+        branch: "Computer Science",
+        skills: ["React", "Node.js", "Python"],
+        internships: [],
+        credibilityScore: 98
+    };
+
+    // Mock job requirements for AI matching demo
+    const jobRequirements = {
+        requiredSkills: ["React", "Node.js", "JavaScript"],
+        minCGPA: 7.5,
+        preferredBranches: ["Computer Science", "Information Technology"],
+        experienceType: "internship"
+    };
 
     const evidence = [
         { id: 1, type: "Internship", name: "Full-Stack Dev", entity: "TechFlow Systems", date: "Dec 2025", skills: ["React", "Express"], proof: "#" },
@@ -60,6 +78,12 @@ export default function CandidateEvidenceView({ candidate }) {
             <div className="grid lg:grid-cols-12 gap-8">
                 {/* Reliability & Signals */}
                 <div className="lg:col-span-4 space-y-8">
+                    {/* AI Matching Panel */}
+                    <AIMatchingPanel 
+                        candidate={data}
+                        jobRequirements={jobRequirements}
+                    />
+
                     <Card className="border-border/50">
                         <CardHeader>
                             <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">

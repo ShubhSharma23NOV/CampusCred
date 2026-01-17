@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+functions/node_modules/
+backend/target/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+frontend/.env
+frontend/.env.local
+
+# Build outputs
+frontend/dist/
+frontend/build/
+backend/target/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebaserc.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+.cache/
+*.pid
+*.seed
+*.pid.lock

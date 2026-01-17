@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Separator, Badge } from "@/components/DesignSystem";
 import { FileSpreadsheet, Download, FileText, Share2, ClipboardCheck, Sparkles } from "lucide-react";
+import MockGoogleSheet from "@/components/MockGoogleSheet";
 
 export default function TpoReports() {
+    const [showSheet, setShowSheet] = useState(false);
+
     return (
         <div className="p-8 space-y-8">
             <header className="space-y-1">
@@ -77,7 +80,10 @@ export default function TpoReports() {
                             <p className="text-xs text-emerald-700/80 leading-relaxed font-medium">
                                 Sync all placement and verification data directly to your institutional Google Workspace. Updates occur every 6 hours.
                             </p>
-                            <button className="w-full py-4 bg-emerald-700 text-white font-black text-xs uppercase tracking-widest hover:bg-emerald-800 transition-all shadow-lg active:scale-95">
+                            <button 
+                                onClick={() => setShowSheet(true)}
+                                className="w-full py-4 bg-emerald-700 text-white font-black text-xs uppercase tracking-widest hover:bg-emerald-800 transition-all shadow-lg active:scale-95"
+                            >
                                 INITIALIZE FULL DATA SYNC
                             </button>
                         </CardContent>
@@ -109,6 +115,11 @@ export default function TpoReports() {
                     </Card>
                 </div>
             </div>
+
+            <MockGoogleSheet 
+                isOpen={showSheet} 
+                onClose={() => setShowSheet(false)}
+            />
         </div>
     );
 }

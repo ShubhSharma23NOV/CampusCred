@@ -1,0 +1,41 @@
+{
+  "name": "campuscred",
+  "version": "1.0.0",
+  "description": "Centralized Internship & Placement Tracking System with AI-Powered Matching",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "install:all": "npm install && cd frontend && npm install && cd ../functions && npm install",
+    "firebase:emulators": "firebase emulators:start",
+    "firebase:deploy": "firebase deploy",
+    "firebase:deploy:hosting": "firebase deploy --only hosting",
+    "firebase:deploy:functions": "firebase deploy --only functions",
+    "firebase:deploy:firestore": "firebase deploy --only firestore",
+    "firebase:logs": "firebase functions:log"
+  },
+  "keywords": [
+    "placement",
+    "internship",
+    "tracking",
+    "firebase",
+    "ai",
+    "gemini",
+    "react",
+    "vite"
+  ],
+  "author": "CampusCred Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/campuscred.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  }
+}

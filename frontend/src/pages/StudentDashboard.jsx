@@ -1,13 +1,62 @@
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Progress } from "@/components/DesignSystem";
-import { ShieldCheck, Zap, BarChart3, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { ShieldCheck, Zap, BarChart3, Clock, CheckCircle2, AlertCircle, Plus, FileText, Sparkles } from "lucide-react";
+import MockGoogleForm from "@/components/MockGoogleForm";
 
 export default function StudentDashboard() {
+    const [showForm, setShowForm] = useState(false);
+    const [stats, setStats] = useState({
+        verified: 12,
+        active: 3,
+        reliability: 98
+    });
+
+    const handleFormSubmit = (data) => {
+        // Update stats when new experience is logged
+        setStats(prev => ({
+            ...prev,
+            active: prev.active + 1
+        }));
+    };
+
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
-            <header className="space-y-2">
-                <h1 className="text-3xl font-black tracking-tight">Student Dashboard</h1>
-                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Credibility Overview</p>
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="space-y-2">
+                    <h1 className="text-3xl font-black tracking-tight">Student Dashboard</h1>
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Credibility Overview</p>
+                </div>
+                <button
+                    onClick={() => setShowForm(true)}
+                    className="px-6 py-3 bg-gradient-to-r from-primary to-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-3"
+                >
+                    <Plus className="w-5 h-5" /> Log New Experience
+                    <Sparkles className="w-4 h-4 animate-pulse" />
+                </button>
             </header>
+
+            {/* Quick Action Card */}
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 shadow-lg">
+                <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                <FileText className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-blue-900">Ready to Log Your Latest Experience?</h3>
+                                <p className="text-sm text-blue-700 font-medium">Add internships, projects, certifications, or community work to your verified record.</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 text-sm"
+                        >
+                            <Plus className="w-4 h-4" /> Start Form
+                        </button>
+                    </div>
+                </CardContent>
+            </Card>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
@@ -17,7 +66,7 @@ export default function StudentDashboard() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-black">12</div>
+                        <div className="text-4xl font-black">{stats.verified}</div>
                         <p className="text-[10px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">Confirmed by Institution</p>
                     </CardContent>
                 </Card>
@@ -29,7 +78,7 @@ export default function StudentDashboard() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-black">3</div>
+                        <div className="text-4xl font-black">{stats.active}</div>
                         <p className="text-[10px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">Currently in-progress</p>
                     </CardContent>
                 </Card>
@@ -41,8 +90,8 @@ export default function StudentDashboard() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-black">98%</div>
-                        <Progress value={98} className="h-1.5 mt-3" />
+                        <div className="text-4xl font-black">{stats.reliability}%</div>
+                        <Progress value={stats.reliability} className="h-1.5 mt-3" />
                     </CardContent>
                 </Card>
 
@@ -102,6 +151,12 @@ export default function StudentDashboard() {
                     </CardContent>
                 </Card>
             </div>
+
+            <MockGoogleForm 
+                isOpen={showForm} 
+                onClose={() => setShowForm(false)}
+                onSubmit={handleFormSubmit}
+            />
         </div>
     );
 }
